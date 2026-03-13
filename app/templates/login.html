@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录 - 矿产贸易企业智能经营平台</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}" />
+</head>
+<body class="login-body">
+  <div class="login-shell">
+    <section class="login-hero card">
+      <div class="brand-badge big">MT</div>
+      <h1>矿产贸易企业智能经营平台</h1>
+      <p>覆盖市场行情、采购管理、生产监测、销售获客与多 Agent 智能决策。</p>
+      <ul class="login-list">
+        <li>市场策略 Agent：判断价格、库存与节奏</li>
+        <li>采购优化 Agent：推荐矿源、议价与替代方案</li>
+        <li>生产监测 Agent：跟踪开采、设备、安全与产量</li>
+        <li>销售增长 Agent：输出报价、线索优先级与销售动作</li>
+      </ul>
+    </section>
+    <section class="login-form-wrap card">
+      <h2>账号登录</h2>
+      <p class="muted">测试账号：admin / buyer / sales / boss</p>
+      {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+      <form method="post" action="/login" class="form-stack">
+        <label>用户名<input type="text" name="username" placeholder="请输入用户名" required /></label>
+        <label>密码<input type="password" name="password" placeholder="请输入密码" required /></label>
+        <button type="submit" class="btn btn-primary">进入系统</button>
+      </form>
+    </section>
+  </div>
+</body>
+</html>

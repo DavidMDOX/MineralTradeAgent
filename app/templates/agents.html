@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}智能 Agent 中枢{% endblock %}
+{% block page_title %}智能 Agent 中枢{% endblock %}
+{% block page_subtitle %}每个 Agent 均突出不同专业侧重点，帮助市场、采购、生产、销售与管理层做决策。{% endblock %}
+{% block content %}
+<div class="grid cols-2">
+  <div class="card">
+    <div class="section-title">选择专业 Agent</div>
+    <form method="post" action="/agents" class="form-stack">
+      <label>Agent 类型
+        <select name="agent_key">
+          {% for key, item in agents.items() %}
+            <option value="{{ key }}" {% if selected_agent == key %}selected{% endif %}>{{ item.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>你的问题
+        <textarea name="user_message" rows="6" placeholder="例如：请给我一份今天的采购策略建议，重点说明矿源选择、议价和交期风险。">{{ user_message or '' }}</textarea>
+      </label>
+      <button type="submit" class="btn btn-primary">生成专业分析</button>
+    </form>
+    <div class="agent-grid mt-16">
+      {% for key, item in agents.items() %}
+        <div class="agent-card {% if selected_agent == key %}selected{% endif %}">
+          <h4>{{ item.name }}</h4>
+          <p>{{ item.focus }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="card result-card">
+    <div class="section-title">Agent 输出结果</div>
+    {% if agent_result %}
+      <div class="agent-meta">
+        <span class="score-badge">{{ agent_result.agent_name }}</span>
+        <span class="muted">{{ agent_result.focus }}</span>
+      </div>
+      <div class="agent-output">{{ agent_result.html | safe }}</div>
+    {% else %}
+      <div class="empty-state">请选择一个 Agent 并输入问题，系统会输出经过排版优化后的专业建议。</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

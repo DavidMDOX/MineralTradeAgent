@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}经营总览{% endblock %}
+{% block page_title %}{{ data.role_focus.title }}{% endblock %}
+{% block page_subtitle %}{{ data.role_focus.subtitle }}{% endblock %}
+{% block content %}
+<div class="grid cols-4">
+  {% for item in data.common_metrics %}
+    <div class="stat-card card">
+      <div class="mini-note">{{ item.label }}</div>
+      <div class="stat-value">{{ item.value }}</div>
+      <div class="delta">{{ item.delta }}</div>
+    </div>
+  {% endfor %}
+</div>
+<div class="grid cols-2 mt-16">
+  {% for item in data.role_cards %}
+    <div class="feature-card card accent-{{ user.role }}">
+      <div class="mini-note">角色重点</div>
+      <h3>{{ item.title }}</h3>
+      <div class="big-value">{{ item.value }}</div>
+      <p>{{ item.note }}</p>
+    </div>
+  {% endfor %}
+</div>
+<div class="grid cols-2 mt-16">
+  <div class="card">
+    <div class="section-title">矿价与库存总览</div>
+    <canvas id="dashboardMarketChart"></canvas>
+  </div>
+  <div class="card">
+    <div class="section-title">经营层清晰指引</div>
+    <div class="timeline">
+      <div><strong>1. 市场行情</strong><span>先看价格、库存与汇率是否支持采购或销售动作。</span></div>
+      <div><strong>2. 采购管理</strong><span>比较矿源到岸成本、交期与可靠性，锁定供应方案。</span></div>
+      <div><strong>3. 生产监测</strong><span>检查开采作业进度、设备状态、安全与产量是否达标。</span></div>
+      <div><strong>4. 销售获客</strong><span>根据竞品价格与客户意向生成报价和跟进动作。</span></div>
+      <div><strong>5. Agent 中枢</strong><span>让专业 Agent 生成日报、建议与下一步执行方案。</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+window.renderLineChart('dashboardMarketChart', {
+  labels: {{ data.market.labels|tojson }},
+  series: [
+    { label: 'LME 铜价', data: {{ data.market.lme_copper|tojson }} },
+    { label: '港口库存', data: {{ data.market.inventory|tojson }} }
+  ]
+});
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}生产监测{% endblock %}
+{% block page_title %}生产监测管理模块{% endblock %}
+{% block page_subtitle %}围绕开采作业、班次产量、设备利用率、矿石品位与安全状态进行可视化监控。{% endblock %}
+{% block content %}
+<div class="grid cols-5">
+  <div class="stat-card card"><div class="mini-note">日采出矿量</div><div class="stat-value">{{ data.production.summary.daily_output }} t</div><div class="delta">达成率 {{ data.production.summary.target_completion }}%</div></div>
+  <div class="stat-card card"><div class="mini-note">平均品位</div><div class="stat-value">{{ data.production.summary.avg_grade }}</div><div class="delta">稳中上升</div></div>
+  <div class="stat-card card"><div class="mini-note">设备开机率</div><div class="stat-value">{{ data.production.summary.equipment_uptime }}%</div><div class="delta">高位稳定</div></div>
+  <div class="stat-card card"><div class="mini-note">安全得分</div><div class="stat-value">{{ data.production.summary.safety_score }}</div><div class="delta">整体可控</div></div>
+  <div class="stat-card card"><div class="mini-note">重点异常</div><div class="stat-value">1</div><div class="delta">钻机温升</div></div>
+</div>
+<div class="grid cols-2 mt-16">
+  <div class="card"><div class="section-title">班次采出矿量</div><canvas id="oreTonsChart"></canvas></div>
+  <div class="card"><div class="section-title">品位与设备开机率</div><canvas id="gradeEquipmentChart"></canvas></div>
+</div>
+<div class="card mt-16">
+  <div class="section-title">生产预警与巡检建议</div>
+  <div class="bullet-grid">
+    {% for item in data.production.alerts %}<div class="bullet-item">{{ item }}</div>{% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+window.renderBarChart('oreTonsChart', {
+ labels: {{ data.production.labels|tojson }},
+ values: {{ data.production.ore_tons|tojson }},
+ label: '采出矿量'
+});
+window.renderLineChart('gradeEquipmentChart', {
+ labels: {{ data.production.labels|tojson }},
+ series: [
+   { label: '矿石品位', data: {{ data.production.ore_grade|tojson }} },
+   { label: '设备开机率', data: {{ data.production.equipment|tojson }} }
+ ]
+});
+</script>
+{% endblock %}

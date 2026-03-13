@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}矿产贸易企业智能经营平台{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', path='/css/app.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <div class="brand-badge">MT</div>
+        <div>
+          <h1>矿产贸易企业</h1>
+          <p>智能经营与 Agent 中枢</p>
+        </div>
+      </div>
+      <div class="role-chip role-{{ user.role }}">
+        <span>{{ data.role_focus.title }}</span>
+        <small>{{ data.role_focus.subtitle }}</small>
+      </div>
+      <nav class="nav-list">
+        {% for item in nav_items %}
+          <a class="nav-item {% if active_nav == item.key %}active{% endif %}" href="{{ item.path }}">{{ item.label }}</a>
+        {% endfor %}
+      </nav>
+      <div class="sidebar-footer">
+        <div class="mini-note">当前用户</div>
+        <div class="user-name">{{ user.name }}（{{ user.username }}）</div>
+        <a class="logout-link" href="/logout">退出登录</a>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <div>
+          <div class="breadcrumbs">
+            {% set crumbs = data.breadcrumbs.get(active_nav, ['首页']) %}
+            {% for crumb in crumbs %}
+              <span>{{ crumb }}</span>{% if not loop.last %}<span class="sep">/</span>{% endif %}
+            {% endfor %}
+          </div>
+          <h2>{% block page_title %}{% endblock %}</h2>
+          <p class="page-subtitle">{% block page_subtitle %}{% endblock %}</p>
+        </div>
+        <div class="focus-tags">
+          {% for tag in data.role_focus.highlights %}
+            <span>{{ tag }}</span>
+          {% endfor %}
+        </div>
+      </header>
+
+      <section class="content-area">
+        {% block content %}{% endblock %}
+      </section>
+    </main>
+  </div>
+  <script src="{{ url_for('static', path='/js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

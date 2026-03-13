@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}销售获客{% endblock %}
+{% block page_title %}销售获客模块{% endblock %}
+{% block page_subtitle %}跟踪竞品价格、管理潜在客户线索，并为报价与转化节奏提供支撑。{% endblock %}
+{% block content %}
+<div class="grid cols-2">
+  <div class="card">
+    <div class="section-title">竞品价格监控</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>公司</th><th>产品</th><th>平台</th><th>价格</th><th>趋势</th></tr></thead>
+        <tbody>
+          {% for row in data.competitors %}
+          <tr><td>{{ row.company }}</td><td>{{ row.product }}</td><td>{{ row.channel }}</td><td>¥{{ row.price }}</td><td>{{ row.trend }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">潜在客户线索池</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>客户</th><th>联系人</th><th>意向</th><th>需求</th><th>状态</th></tr></thead>
+        <tbody>
+          {% for row in data.leads %}
+          <tr><td>{{ row.company }}</td><td>{{ row.contact }}</td><td>{{ row.intent }}</td><td>{{ row.volume }} t</td><td>{{ row.status }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="grid cols-2 mt-16">
+  <div class="card"><div class="section-title">竞品价格对比</div><canvas id="competitorChart"></canvas></div>
+  <div class="card">
+    <div class="section-title">销售层级指引</div>
+    <div class="timeline compact">
+      <div><strong>高意向线索</strong><span>24 小时内完成报价并锁定交付窗口。</span></div>
+      <div><strong>中意向线索</strong><span>发送标准产品资料与产能证明，建立信任。</span></div>
+      <div><strong>低意向线索</strong><span>进入定期触达池，等待价格触发点。</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+window.renderBarChart('competitorChart', {
+ labels: {{ data.competitors | map(attribute='company') | list | tojson }},
+ values: {{ data.competitors | map(attribute='price') | list | tojson }},
+ label: '竞品价格'
+});
+</script>
+{% endblock %}

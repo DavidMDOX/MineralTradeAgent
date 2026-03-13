@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}市场行情{% endblock %}
+{% block page_title %}市场行情模块{% endblock %}
+{% block page_subtitle %}用更贴近真实业务的虚拟历史数据展示国际与国内矿产价格、库存与汇率变化。{% endblock %}
+{% block content %}
+<div class="grid cols-4">
+  <div class="stat-card card"><div class="mini-note">LME 铜价</div><div class="stat-value">${{ data.market.summary.lme_latest }}/t</div><div class="delta">{{ data.market.summary.lme_change_pct }}%</div></div>
+  <div class="stat-card card"><div class="mini-note">上期所主力</div><div class="stat-value">¥{{ data.market.summary.shfe_latest }}/t</div><div class="delta">近 14 日偏强</div></div>
+  <div class="stat-card card"><div class="mini-note">港口库存</div><div class="stat-value">{{ "{:,}".format(data.market.summary.inventory_latest) }} t</div><div class="delta">{{ data.market.summary.inventory_change_pct }}%</div></div>
+  <div class="stat-card card"><div class="mini-note">USD/CNY</div><div class="stat-value">{{ data.market.summary.fx_latest }}</div><div class="delta">汇率回落</div></div>
+</div>
+<div class="grid cols-2 mt-16">
+  <div class="card"><div class="section-title">国际与国内价格走势</div><canvas id="marketPriceChart"></canvas></div>
+  <div class="card"><div class="section-title">库存与汇率</div><canvas id="marketInventoryChart"></canvas></div>
+</div>
+<div class="card mt-16">
+  <div class="section-title">市场观察要点</div>
+  <div class="bullet-grid">
+    {% for item in data.market.events %}<div class="bullet-item">{{ item }}</div>{% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+window.renderLineChart('marketPriceChart', {
+ labels: {{ data.market.labels|tojson }},
+ series: [
+   { label: 'LME 铜价', data: {{ data.market.lme_copper|tojson }} },
+   { label: 'SHFE 铜价', data: {{ data.market.shfe_copper|tojson }} }
+ ]
+});
+window.renderLineChart('marketInventoryChart', {
+ labels: {{ data.market.labels|tojson }},
+ series: [
+   { label: '库存', data: {{ data.market.inventory|tojson }} },
+   { label: '汇率', data: {{ data.market.fx|tojson }} }
+ ]
+});
+</script>
+{% endblock %}

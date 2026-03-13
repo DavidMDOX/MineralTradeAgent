@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}采购管理{% endblock %}
+{% block page_title %}采购管理模块{% endblock %}
+{% block page_subtitle %}对现有矿源进行到岸成本、纯度、交期与可靠性综合评估，并识别替代渠道。{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="section-title">供应商综合评分榜</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>供应商</th><th>品类</th><th>地区</th><th>到岸成本</th><th>纯度</th><th>交期</th><th>可靠性</th><th>综合分</th></tr></thead>
+      <tbody>
+      {% for row in data.suppliers %}
+        <tr>
+          <td>{{ row.name }}</td><td>{{ row.grade }}</td><td>{{ row.region }}</td><td>¥{{ row.landed_cost }}</td><td>{{ row.purity }}</td><td>{{ row.lead_time }} 天</td><td>{{ row.reliability }}</td><td><span class="score-badge">{{ row.score }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="grid cols-2 mt-16">
+  <div class="card"><div class="section-title">综合评分对比</div><canvas id="supplierScoreChart"></canvas></div>
+  <div class="card"><div class="section-title">采购指引</div>
+    <div class="timeline compact">
+      <div><strong>主供应方案</strong><span>优先锁定综合分最高的供应商，保障 50% 基础需求。</span></div>
+      <div><strong>替代供应方案</strong><span>用第二梯队矿源形成议价与应急替补。</span></div>
+      <div><strong>风险控制</strong><span>高运费与长交期矿源只做补充，避免挤占现金流。</span></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+window.renderBarChart('supplierScoreChart', {
+ labels: {{ data.suppliers | map(attribute='name') | list | tojson }},
+ values: {{ data.suppliers | map(attribute='score') | list | tojson }},
+ label: '综合分'
+});
+</script>
+{% endblock %}
